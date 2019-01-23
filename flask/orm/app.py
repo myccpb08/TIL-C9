@@ -63,3 +63,16 @@ class User(db.Model):
 
 # ORDER + LIMIT + OFFSET
 # users = User.query.order_by(User.username).limit(1).offset(2).all()
+
+# [DELETE]
+# DELETE FROM users WHERE id=1;
+# user = User.query.get(1)
+# db.session.delete(user)
+# db.session.commit()
+
+# [UPDATE]
+# UPDATE users SET username='junwoo' WHERE id=2;
+# user = User.query.get(2)
+# user.username = 'junwoo'
+# db.session.commit()
+
