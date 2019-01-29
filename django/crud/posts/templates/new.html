@@ -7,7 +7,10 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="/posts/create/" method="get">
+    <form action="/posts/create/" method="post">  <!-- get 요청은 : ~~한 html 페이지를 보여줘 & 주소창에 내 요청이 다 보여짐-->
+                                                 <!-- post 요청은 : 이거 실어 보낼 테니까 저장하고 처리해 줘 & 주소창에 내 요청 안 보임-->
+        {% csrf_token %}  <!--post 요청 보낼 때 꼭 필요한 거. 보안상の 목적 -->
+        
         <input type="text" name="title"/>
         <input type="text" name="content"/>
         <input type="submit" value="제출"/>

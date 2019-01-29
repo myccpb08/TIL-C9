@@ -8,9 +8,10 @@
 </head>
 <body>
     <h1>Post Index</h1>
+    <a href="/posts/new/">글쓰기</a>
     <ul>
     {% for post in posts %}
-        <li>{{ post.title }} - {{post.content}}</li>
+        <li><a href="/posts/{{post.pk}}">{{ post.title }}</a></li>
     {% endfor %}
     </ul>
 </body>
