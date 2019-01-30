@@ -13,5 +13,19 @@
     <a href="{% url 'posts:list' %}">List</a>  <!-- 목록으로 돌아가는 페이지 -->
     <a href="{% url 'posts:edit' post.pk %}">Edit</a>
     <a href="{% url 'posts:delete' post.pk %}">Delete</a>
+    
+    <hr>
+    
+    <form action="{% url 'posts:comments_create' post.pk %}" method="post">
+        {% csrf_token %}
+        댓글 : <input type="text" name="content"/>
+        <input type="submit" value="Submit"/>
+    </form>
+    
+    <ul>
+        {% for comment in post.comment_set.all %}   <!-- 파이썬 쉘이랑 다름 괄호 없어! -->
+        <li> {{ comment.content }} - <a href="{% url 'posts:comments_delete' post.pk comment.pk %}">삭제</a></li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

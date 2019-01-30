@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'posts.apps.PostsConfig',
+    'ws20.apps.Ws20Config',
 ]
 
 MIDDLEWARE = [
