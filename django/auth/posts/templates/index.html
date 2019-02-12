@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block container %}
+
+    <img src="{% static '2.png' %}"/></img>
+    <h1>Post Index</h1>
+    
+    {% if usef.is_authenticated %}
+        <a href="{% url 'posts:new' %}">글쓰기</a>
+    {% endif %}    
+        
+    <ul>
+    {% for post in posts %}
+        <li><a href="{% url 'posts:detail' post.pk %}">{{ post.title }}</a></li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

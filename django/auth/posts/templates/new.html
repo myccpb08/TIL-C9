@@ -1,0 +1,15 @@
+{% extends 'base.html'%}
+
+{%block container %}
+
+    <form method="post" enctype="multipart/form-data"> 
+                                               
+        {% csrf_token %} 
+        
+        <input type="text" name="title"/>
+        <input type="text" name="content"/>
+        <input type="file" name="image" accept="image/*"/>
+        <input type="submit" value="제출"/>
+    </form>
+    
+{% endblock %}
