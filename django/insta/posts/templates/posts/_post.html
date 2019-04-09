@@ -1,7 +1,10 @@
 <div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
+  {% if post.image %}
+  <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.image }}">
+  {% endif %}
   <div class="card-body">
     <p class="card-text">{{ post.content }}</p>
-    <a href="{% url 'posts:delete' post.id %}" class="btn btn-primary">Delete</a>
+    <a href="{% url 'posts:update' post.id %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">Delete</a>
   </div>
 </div>
