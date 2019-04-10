@@ -4,11 +4,11 @@
 
 {% block container %}
 
-<h1>New Post</h1>
+<h1>Post Form</h1>
 
 <form action =""  method ="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {% bootstrap_form post_form %}
+    {% bootstrap_form post_form %}  <!-- post_form 에 bootstra_form 을 입혀서 보여줘 -->
     {% buttons %}
         <button type="submit" class="btn btn-primary">Submit</button>
     {% endbuttons %}
