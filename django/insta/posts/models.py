@@ -28,3 +28,14 @@ class Post(models.Model):
         format = 'JPEG', # 저장 포맷
         options = {'quality':90}, # 옵션
         )
+    
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')  # 좋아요 누른 user 들
+        
+        
+class Comment(models.Model): # 2중 1:N    [글 : 댓글입력자 = 글 : 댓글 = 1:N]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)   # foreignkey 의 첫번째 인자 = 어떤 테이블과 관계를 맺을 것인지
+                                                                                   # on_delete 옵션 必
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    content = models.TextField()
+    
+    
