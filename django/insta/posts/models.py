@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 def post_image_path(instance, filename):
-    return f'posts/{instance.content}/{filename}'
+    return f'posts/image/{filename}'
     
 # Create your models here.
 class Post(models.Model):
@@ -22,15 +22,27 @@ class Post(models.Model):
                                     # SET() : 내가 설정한 걸로 바꿈
                                     # DO_NOTHING : 그냥 아무것도 안 함
     content = models.TextField()
-    image = ProcessedImageField(
-        upload_to = post_image_path,
-        processors=[ResizeToFill(600,600)], # 처리할 작업 목록
-        format = 'JPEG', # 저장 포맷
-        options = {'quality':90}, # 옵션
-        )
+    # image = ProcessedImageField(
+    #     upload_to = post_image_path,
+    #     processors=[ResizeToFill(600,600)], # 처리할 작업 목록
+    #     format = 'JPEG', # 저장 포맷
+    #     options = {'quality':90}, # 옵션
+    #     )
     
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')  # 좋아요 누른 user 들
-        
+    
+    
+class Image(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)   # post 와 이미지를 1:n 관계
+    file = ProcessedImageField(
+                upload_to = post_image_path,
+                processors=[ResizeToFill(600,600)], # 처리할 작업 목록
+                format = 'JPEG', # 저장 포맷
+                options = {'quality':90}, # 옵션
+        )
+    
+    
+    
         
 class Comment(models.Model): # 2중 1:N    [글 : 댓글입력자 = 글 : 댓글 = 1:N]
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)   # foreignkey 의 첫번째 인자 = 어떤 테이블과 관계를 맺을 것인지

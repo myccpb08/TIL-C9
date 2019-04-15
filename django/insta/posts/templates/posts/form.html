@@ -9,6 +9,9 @@
 <form action =""  method ="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% bootstrap_form post_form %}  <!-- post_form 에 bootstra_form 을 입혀서 보여줘 -->
+    
+    {{ image_formset.as_p }}  <!-- 각각의 image form set 을 p 태그로 감쌈. 줄바꿈 위하여 . 없으면 가로로 쭉 -->
+    
     {% buttons %}
         <button type="submit" class="btn btn-primary">Submit</button>
     {% endbuttons %}

@@ -1,11 +1,23 @@
 from django import forms
-from .models import Post, Comment  
+from .models import Post, Comment, Image
 
 class PostForm(forms.ModelForm):  # 사용하려면, views.py에서 import 해줘야함 
     class Meta:
         model = Post    # 어떠한 모델의 폼을 작성할 거니? Post 라는 모델의 폼을 만들거야
-        fields = ['content','image',]   # models.py 에 작성된 Post 클래스의 content 필드와 이미지필드
-    
+        fields = ['content',]   # models.py 에 작성된 Post 클래스의 content 필드와 이미지필드
+
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['file',]
+        
+ImageFormSet = forms.inlineformset_factory(Post,Image,form=ImageForm,extra=3)
+# 첫번째 인자 : 부모 모델 (1:n 관계에서 1 역할, 이미지를 데리고 있을 애 = 글 )
+# 두번째 인자 : 생성할 모델 ( 이미지 모델)
+# 무슨 폼을 사용하는지
+# 몇 개의 이미지폼을 엮을 것인지 = 이미지 폼 3개를 쓸 수 있음
+
         
 class CommentForm(forms.ModelForm):
     content = forms.CharField(label='', widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'댓글을 작성하세요'}))  

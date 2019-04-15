@@ -4,10 +4,17 @@
 
 <div class="container">
     <h1>{{ people.username }}</h1>
+    
+    {% if user == people %}  <!-- 현재 로그인 사람과, user 가 같으면 , 회원정보수정페이지 보여줘 -->
+    <div>
+        <a href="{% url 'accounts:update' %}">계정 정보 수정</a>
+    </div>
+    {% endif %}
+    
     <div class="row">
         {% for post in people.post_set.all %}
         <div class="col-4">
-            <img src="{{ post.image.url }}" class="img-fluid"/>
+            <img src="{{ post.image_set.first.file.url }}" class="img-fluid"/> <!--post 가 가지고 있는 첫번째 파일 url -->
         </div>
         {% endfor %}
     </div>

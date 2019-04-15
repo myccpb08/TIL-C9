@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_http_methods
-from .forms import PostForm, CommentForm
+from .forms import PostForm, CommentForm, ImageFormSet
 from .models import Post, Comment
+from django.db import transaction
 # Create your views here.
 
 def list(request):
@@ -18,18 +19,38 @@ def list(request):
                   # 로그인 후 next 로 보내려면 코드 추가해 주면 됨 (accounts/views.py 에)
 def create(request):
     if request.method =='POST':
-        post_form = PostForm(request.POST, request.FILES)
-        if post_form.is_valid():  # 저장해도 되는 값이 들어왔으면
+        #post_form = PostForm(request.POST, request.FILES)
+        
+        post_form = PostForm(request.POST)  # post_form 에는 더이상 이미지파일이 올라가지 않으므로 files 삭제
+        image_formset = ImageFormSet(request.POST, request.FILES) # 이미지폼은 post 도 있어야 함(왜인지는 잘...-_-)
+        
+        if post_form.is_valid() and image_formset.is_valid():  # 저장해도 되는 값이 들어왔으면
             post = post_form.save(commit=False)  # 객체를 만들었으나, 아직 DB에 저장은 x (commit=False 덕분에)
             post.user = request.user  # post 라는 객체의 user 칸에  request 의 user 를 가져와서 받아줌
-            post.save()  # 저장 = 실제 DB 에 반영
+            
+            # post 와 이미지가 1:n 관계라서, post 가 먼저 존재해야, 이미지가 만들어짐
+            with transaction.atomic():   # import 해야함
+            # 1️⃣ 일단 post 를 만들어야한다
+                post.save()  # 저장 = 실제 DB 에 반영
+                
+                # 2️⃣그후에 image를 저장할 수 있다
+                image_formset.instance = post  # image_formset 은 이미지를 만들기 위한 애긴 한데, 3개를 한꺼번에 wrap 해뒀음(extra=3)
+                                               # 꺼내기 위해서, instance 붙여줌?
+                                               # 근데 post.save() 라는 코드를 실행하고, 확실히 저장을 확인한 뒤에, 다음 문장을 실행하는 게 아니라서
+                                               # 오류가 생길 수 있다. 즉 실제 db에서는 이미지가 먼저 저장되고, post 가 저장될 수 있다는 의미
+                                               # 이걸 막기위하여, 장고에서 제공하는 method 가  = with transaction.atomic()
+                                               
+                image_formset.save() # 부모에 대한 정보를 넣고, save 한다 라고 일단 이해를 하라고 하심
+                        
+                                    
             return redirect('posts:list') 
             
         
     else:  # get방식이면
         post_form = PostForm()
+        image_formset = ImageFormSet
         
-    return render(request, 'posts/form.html', {'post_form' : post_form})  # 템플릿에서 쓰기 위하여 딕셔너리 key형태로 변수 넘겨줌
+    return render(request, 'posts/form.html', {'post_form' : post_form, 'image_formset':image_formset,})  # 템플릿에서 쓰기 위하여 딕셔너리 key형태로 변수 넘겨줌
     
 @login_required        
 def delete(request, post_id):
@@ -51,14 +72,17 @@ def update(request, post_id):
         return redirect('posts:list')
     
     if request.method == 'POST':  # 그냥 submit 버튼 눌렀을 때
-        post_form = PostForm(request.POST, request.FILES, instance=post)
-        if post_form.is_valid():
+        post_form = PostForm(request.POST, instance=post)
+        image_formset = ImageFormSet(request.POST, request.FILES, instance=post)
+        if post_form.is_valid() and image_formset.is_valid():
             post_form.save()
+            image_formset.save()  # update 하는 시점에서는 post 가 만들어진 게 확실하니까 transaction 필요 x
             return redirect('posts:list')
         
     else:  # get요청 = 주소창에 주소 입력했을 때
         post_form = PostForm(instance=post)
-    return render(request, 'posts/form.html', {'post_form':post_form})
+        image_formset = ImageFormSet(instance=post)
+    return render(request, 'posts/form.html', {'post_form':post_form, 'image_formset':image_formset,})
 
 @login_required    
 @require_POST    
