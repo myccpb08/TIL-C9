@@ -127,3 +127,6 @@ STATIC_URL = '/static/'
 # Media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Auth User Model
+AUTH_USER_MODEL = 'accounts.User'  # 앱名.User  (장고가 user 를 생성할 때, account 앱에서 정의한 user 를 사용하겠다라고 인식하도록)
