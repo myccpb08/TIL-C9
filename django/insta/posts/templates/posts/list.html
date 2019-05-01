@@ -11,4 +11,27 @@
 {% endfor %}
 
 
+<script>
+    const likeButtons = document.querySelectorAll('.like-button')  //좋아요 버튼이 많으므로, 해당 클래스를 가진 모든 버튼을 가져와야함 querySelectorAll
+    // 반복문
+    likeButtons.forEach(function(button){  // fuction(button) 에 하나의 버튼이 들어감
+        button.addEventListener('click', function(event){ // 하트버튼을 클릭했을 때, event의 target 에 data-id 정보가 들어있음(?)
+            console.log(event);
+            const postId = event.target.dataset.id
+            axios.get(`/posts/${postId}/like/`)
+                    .then(function(response){
+                        //console.log(response)
+                        document.querySelector(`#like-count-${postId}`).innerText = response.data.count
+                        if (response.data.liked) {  // response.date = {liked:true, count : 1}  // 좋아요 눌렀으면
+                            event.target.classList.remove('far')   // 흰색 하트를 제거하고
+                            event.target.classList.add('fas')  // 채워진 하트를 더해
+                        } else {
+                            event.target.classList.remove('fas')
+                            event.target.classList.add('far')
+                        }
+                    })
+        })
+    })
+</script>
+
 {% endblock %}
