@@ -110,8 +110,18 @@ def comment_create(request, post_id):  # 특정 글에 댓글을 달아야 하�
         comment.user = request.user
         comment.post_id = post_id
         comment.save()
-    return redirect('posts:list') # 댓글을 작성하는 페이지가 따로 있는 건 아니고, 해당 글 밑에 그냥 쓰는 거니까 따로 페이지 만들지 x
+    #return redirect('posts:list') # 댓글을 작성하는 페이지가 따로 있는 건 아니고, 해당 글 밑에 그냥 쓰는 거니까 따로 페이지 만들지 x
+    return JsonResponse({
+        'id' : comment.id,
+        'postId' : post_id,
+        'username' : comment.user.username,
+        'content' : comment.content
+    })
+
     
+
+
+
 
 # a 태그는 post 요청을 보낼 수 없다. post 요청은 form 태그만 사용할 수 있음
 # post 요청 데코레이터 쓰면, 그냥 삭제버튼만 만들어도 될 걸, form 태그로 바꿔줘야하는 번거로움 있음

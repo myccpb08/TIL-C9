@@ -32,6 +32,44 @@
                     })
         })
     })
+    
+    
+    const commentForms = document.querySelectorAll('.comment-form')  // 댓글쓰는 폼은 여러개니까, ALL 로
+    commentForms.forEach(function(form) {
+        form.addEventListener('submit', function(event){  // submit 이라는 이벤트. submit 이벤트는 폼태그만 쓸 수 있음 . 폼태그의 제출버튼을 누르는 순간 작동하라는 의미
+            event.preventDefault()  // 폼태그가 기본적으로 글작성하고 새로고침하는데, 이 기본설정을 막아버리기 위한 작성
+                                    // 문제는 이렇게 하면, 폼태그의 작성기능까지 막아버려서, 댓글이 안 써짐
+            console.log(event)
+            
+            // 내용인식시키기
+            // event.target === form 임
+            const data = new FormData(event.target)    // html 클래스말고, 파이썬 클래스느낌
+            /* FormData 라는 클래스를 사용
+               event.target (=폼태그) 에 담긴 정보를 담는 FormData 라는 바구니 */
+               
+               // Inspect FormData ( FormData 안에 뭐 들어있는지 조사해보기)
+                for (const item of data.entries()) {
+                    console.log(item)  // 댓글 우왕 입력하면 토큰이랑 ["content", "우왕"] 콘솔에 출력
+                }
+                
+                // 이제 포스트 요청 보내기 (이제 댓글 써짐)
+                axios.post(event.target.action, data)  // event.target 이 하나의 폼태그이므로, 그의 action = post 요청 보낼 url 을 말함
+                    .then(function(response){
+                        //console.log(response)
+                        const comment = response.data
+                        const commentList = document.querySelector(`#comment-list-${comment.postId}`) //jsonresponse 에 넘겼던 postId
+                        const newComment = 
+                        `
+                        <div class="card-text">
+                              <strong>${ comment.username }</strong>${ comment.content }
+                                <a href="/posts/${comment.postId}/comments/${comment.id}/delete/">삭제</a>
+                        </div>
+                        `
+                        commentList.insertAdjacentHTML('beforeend', newComment)  // element 끝나기 전에 삽입, newComment 삽입
+                        event.target.reset()
+                    })
+        })
+    })
 </script>
 
 {% endblock %}
